@@ -4,6 +4,7 @@ import { CreateProjectSchema } from "../schema/project.schema";
 const prisma = new PrismaClient();
 
 export const createProject = async (data: any) => {
+  console.log("createProject", data);
   const projectData = CreateProjectSchema.parse(data);
   return await prisma.project.create({ data: projectData });
 };

@@ -27,4 +27,14 @@ model Project {
   id        String  @id @default(uuid())
   name      String
   sections  Section[]
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id        String  @id @default(uuid())
+  username  String  @unique
+  email     String 
+  password  String  
+  projects  Project[]
 }

@@ -2,6 +2,14 @@ import { NextFunction, Request, Response } from "express";
 
 import * as projectService from "../services/project.service";
 
+declare global {
+  namespace Express {
+    interface Request {
+      currentUser?: { userId: string };
+    }
+  }
+}
+
 class ProjectController {
   async getProjects(req: Request, res: Response, next: NextFunction) {
     try {
@@ -13,9 +21,16 @@ class ProjectController {
   }
 
   async createProject(req: Request, res: Response, next: NextFunction) {
-    console.log(req.body);
+    console.log("createProject", req.body);
     try {
-      const project = await projectService.createProject(req.body);
+      const userId = req.currentUser?.userId;
+      if (!userId) {
+        res.status(401).json({ error: "Not authorized" });
+      }
+      const project = await projectService.createProject({
+        ...req.body,
+        userId,
+      });
       res.status(201).json(project);
     } catch (err) {
       next(err);
